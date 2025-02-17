@@ -29,9 +29,7 @@ const data: IExercise[] = [
 ];
 
 const ExerciseList: React.FC = () => {
-  const items = data.map((ex) => (
-    <ExerciseListItem key={ex.id} exercise={ex} />
-  ));
+  const items = data.map((ex) => <ExerciseListItem key={ex.id} exercise={ex} />);
 
   return <div className='flex flex-col gap-2'>{items}</div>;
 };
