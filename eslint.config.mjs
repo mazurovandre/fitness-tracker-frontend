@@ -16,6 +16,14 @@ const eslintConfig = [
     rules: {
       indent: 'error',
     },
+    overrides: [
+      {
+        files: ['app/tests/**/*'],
+        env: {
+          jest: true,
+        },
+      },
+    ],
   },
   eslintConfigPrettier,
 ];
