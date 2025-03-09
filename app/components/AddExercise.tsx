@@ -18,10 +18,23 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { DialogDescription } from '@radix-ui/react-dialog';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import * as z from 'zod';
 
 export default function AddExercise() {
-  const form = useForm({
+  const [open, setOpen] = useState(false);
+  const formSchema = z.object({
+    name: z.string().min(6, 'Название должно быть больше 6 символов'),
+    sets: z.number().min(1, 'Количество серий должно быть больше 0'),
+    reps: z.number().min(1, 'Количество повторений должно быть больше 0'),
+    weight: z.number().min(1, 'Вес должен быть больше 0'),
+  });
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
       sets: 0,
@@ -30,22 +43,23 @@ export default function AddExercise() {
     },
   });
 
-  const onSubmit = (values: any) => {
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log('!!!', values);
-    // setOpen(false); // Закрываем диалог после отправки
+    setOpen(false);
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className='w-full h-12'>Добавить упражнение</Button>
       </DialogTrigger>
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
           <DialogTitle>Добавить упражнение</DialogTitle>
+          <DialogDescription>Заполните форму</DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={onSubmit} className='space-y-8'>
+          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
             <FormField
               control={form.control}
               name='name'
@@ -98,10 +112,11 @@ export default function AddExercise() {
                 </FormItem>
               )}
             />
+            <DialogFooter>
+              <Button type='submit'>Сохранить</Button>
+            </DialogFooter>
           </form>
-          <Button type='submit'>Сохранить</Button>
         </Form>
-        <DialogFooter></DialogFooter>
       </DialogContent>
     </Dialog>
   );
