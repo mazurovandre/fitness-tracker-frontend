@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -18,14 +19,11 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-
-const authFormSchema = z.object({
-  email: z.string().email('Введите корректный email'),
-  password: z.string().min(6, 'Пароль должен быть не менее 6 символов'),
-});
+import { authFormSchema, signIn, signUp } from '../api/auth';
 
 export function AuthDialog() {
   const [open, setOpen] = useState(false);
@@ -34,16 +32,46 @@ export function AuthDialog() {
   const form = useForm<z.infer<typeof authFormSchema>>({
     resolver: zodResolver(authFormSchema),
     defaultValues: {
-      email: '',
+      login: '',
       password: '',
+    },
+  });
+
+  const {
+    mutate: signUpMutation,
+    isPending: isSignUpPending,
+    error: signUpError,
+  } = useMutation({
+    mutationFn: signUp,
+    onSuccess: () => {
+      setOpen(false);
+      form.reset();
+    },
+  });
+
+  const {
+    mutate: signInMutation,
+    isPending: isSignInPending,
+    error: signInError,
+  } = useMutation({
+    mutationFn: signIn,
+    onSuccess: () => {
+      setOpen(false);
+      form.reset();
     },
   });
 
   const onSubmit = (values: z.infer<typeof authFormSchema>) => {
     console.log(values);
-    // Here will be auth logic
-    setOpen(false);
+    if (isSignUp) {
+      signUpMutation(values);
+    } else {
+      signInMutation(values);
+    }
   };
+
+  const isPending = isSignUp ? isSignUpPending : isSignInPending;
+  const error = isSignUp ? signUpError : signInError;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -63,10 +91,10 @@ export function AuthDialog() {
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6 mx-auto'>
             <FormField
               control={form.control}
-              name='email'
+              name='login'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Email или логин</FormLabel>
                   <FormControl>
                     <Input placeholder='email@example.com' {...field} />
                   </FormControl>
@@ -87,17 +115,26 @@ export function AuthDialog() {
                 </FormItem>
               )}
             />
-            <div className='flex flex-col space-y-4'>
-              <Button type='submit'>{isSignUp ? 'Зарегистрироваться' : 'Войти'}</Button>
-              <Button
-                type='button'
-                variant='link'
-                className='text-sm'
-                onClick={() => setIsSignUp(!isSignUp)}
-              >
-                {isSignUp ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрироваться'}
+            {error && (
+              <p className='text-sm text-red-500 text-center'>
+                {error instanceof Error ? error.message : 'Произошла ошибка'}
+              </p>
+            )}
+            <DialogFooter>
+              <Button type='submit' disabled={isPending}>
+                {isPending ? 'Загрузка...' : isSignUp ? 'Зарегистрироваться' : 'Войти'}
               </Button>
-            </div>
+            </DialogFooter>
+            <p className='text-center text-sm'>
+              {isSignUp ? 'Уже есть аккаунт?' : 'Нет аккаунта?'}{' '}
+              <button
+                type='button'
+                onClick={() => setIsSignUp(!isSignUp)}
+                className='text-primary hover:underline'
+              >
+                {isSignUp ? 'Войти' : 'Зарегистрироваться'}
+              </button>
+            </p>
           </form>
         </Form>
       </DialogContent>
