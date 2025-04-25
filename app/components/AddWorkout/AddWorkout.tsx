@@ -24,7 +24,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
-export default function AddExercise() {
+export default function AddWorkout() {
   const [open, setOpen] = useState(false);
   const formSchema = z.object({
     name: z.string().min(6, 'Название должно быть больше 6 символов'),
@@ -51,7 +51,9 @@ export default function AddExercise() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className='w-full h-12'>Добавить упражнение</Button>
+        <div className='flex justify-center'>
+          <Button className='w-full h-12'>Добавить упражнение</Button>
+        </div>
       </DialogTrigger>
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>

@@ -1,10 +1,12 @@
-import { IExercise } from '@/app/types/types';
+import { IWorkout } from '@/app/types/types';
 import { faker } from '@faker-js/faker';
+import { exercises } from './fetchExercises';
 
-const generateFakeExercises = (count: number = 10): IExercise[] => {
+const generateFakeWorkouts = (count: number = 10): IWorkout[] => {
   return Array.from({ length: count }, (_, index) => ({
     id: index + 1,
     name: faker.commerce.productName(),
+    exercise: exercises[faker.number.int({ min: 0, max: exercises.length - 1 })],
     description: faker.lorem.sentence(),
     sets: faker.number.int({ min: 3, max: 5 }),
     reps: faker.number.int({ min: 8, max: 12 }),
@@ -13,6 +15,6 @@ const generateFakeExercises = (count: number = 10): IExercise[] => {
   }));
 };
 
-export const fetchExercises = async (): Promise<IExercise[]> => {
-  return new Promise((resolve) => setTimeout(() => resolve(generateFakeExercises(10)), 500));
+export const fetchWorkouts = async (): Promise<IWorkout[]> => {
+  return new Promise((resolve) => setTimeout(() => resolve(generateFakeWorkouts(10)), 500));
 };
