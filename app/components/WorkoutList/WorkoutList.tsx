@@ -7,7 +7,7 @@ export default async function ExerciseList() {
   const items = data.map((ex) => <ExerciseListItem key={ex.id} workout={ex} />);
 
   return (
-    <div className='h-full flex justify-between flex-col gap-2'>
+    <div className='h-full flex flex-col gap-2 pb-16'>
       <div className='flex flex-col gap-2'>{items}</div>
       <AddExercise />
     </div>
