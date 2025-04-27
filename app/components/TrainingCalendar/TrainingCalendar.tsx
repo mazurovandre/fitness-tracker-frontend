@@ -10,6 +10,7 @@ import {
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
+import { CalendarIcon } from '../ui/icons/calendar-icon';
 
 export function TrainingCalendar() {
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -17,11 +18,16 @@ export function TrainingCalendar() {
   return (
     <Accordion type='single' collapsible className='w-full'>
       <AccordionItem value='calendar'>
-        <AccordionTrigger className='text-lg pt-0 !no-underline'>
-          {date ? format(date, 'd MMMM yyyy', { locale: ru }) : 'Выберите дату'}
+        <AccordionTrigger className='text-lg pt-0 pb-2 !no-underline'>
+          <div className='flex items-center gap-2'>
+            <CalendarIcon className='mb-[2px]' />
+            <span className=''>
+              {date ? format(date, 'd MMMM yyyy', { locale: ru }) : 'Выберите дату'}
+            </span>
+          </div>
         </AccordionTrigger>
         <AccordionContent>
-          <div className='flex justify-center p-4'>
+          <div className='flex justify-center p-0'>
             <Calendar
               mode='single'
               selected={date}
