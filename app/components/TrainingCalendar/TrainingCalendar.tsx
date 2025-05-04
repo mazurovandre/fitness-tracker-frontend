@@ -10,20 +10,18 @@ import {
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
-import { CalendarIcon } from '../ui/icons/calendar-icon';
+import { Calendar as CalendarIcon } from 'lucide-react';
 
 export function TrainingCalendar() {
   const [date, setDate] = useState<Date | undefined>(new Date());
 
   return (
     <Accordion type='single' collapsible className='w-full'>
-      <AccordionItem value='calendar'>
+      <AccordionItem value='calendar' className='border-b-0'>
         <AccordionTrigger className='text-lg pt-0 pb-2 !no-underline'>
           <div className='flex items-center gap-2'>
             <CalendarIcon className='mb-[2px]' />
-            <span className=''>
-              {date ? format(date, 'd MMMM yyyy', { locale: ru }) : 'Выберите дату'}
-            </span>
+            {date ? format(date, 'd MMMM yyyy', { locale: ru }) : 'Выберите дату'}
           </div>
         </AccordionTrigger>
         <AccordionContent>

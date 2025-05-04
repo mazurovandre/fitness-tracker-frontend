@@ -22,7 +22,7 @@ import { Label } from '@/components/ui/label';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { fetchExercises } from '../WorkoutList/fetchExercises';
-import { CheckboxIcon } from '../ui/icons/checkbox-icon';
+import { Check } from 'lucide-react';
 
 interface AddWorkoutProps {
   onSubmit: (exercises: IExercise[]) => void;
@@ -74,7 +74,7 @@ export const AddWorkout: React.FC<AddWorkoutProps> = ({ onSubmit }) => {
         <span>
           [{exercise.muscleGroup}] : {exercise.name}
         </span>
-        {selectedExercises.some((e) => e.id === exercise.id) && <CheckboxIcon />}
+        {selectedExercises.some((e) => e.id === exercise.id) && <Check />}
       </CommandItem>
     ));
   };

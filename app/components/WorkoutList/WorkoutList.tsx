@@ -31,7 +31,7 @@ export default function WorkoutList() {
   };
 
   return (
-    <div className='h-full flex flex-col gap-4 pb-16'>
+    <div className='h-full flex flex-col gap-2 pb-16'>
       <TrainingCalendar />
       <div className='flex flex-col gap-2'>
         {workouts.map((workout) => (
