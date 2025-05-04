@@ -1,6 +1,14 @@
 'use client';
 
+import { IExercise } from '@/app/types/types';
 import { Button } from '@/components/ui/button';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from '@/components/ui/command';
 import {
   Drawer,
   DrawerContent,
@@ -9,118 +17,104 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { Label } from '@/components/ui/label';
+
+import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
+import { fetchExercises } from '../WorkoutList/fetchExercises';
+import { CheckboxIcon } from '../ui/icons/checkbox-icon';
 
-export default function AddWorkout() {
+interface AddWorkoutProps {
+  onSubmit: (exercises: IExercise[]) => void;
+}
+
+export const AddWorkout: React.FC<AddWorkoutProps> = ({ onSubmit }) => {
   const [open, setOpen] = useState(false);
-  const formSchema = z.object({
-    name: z.string().min(6, 'Название должно быть больше 6 символов'),
-    sets: z.number().min(1, 'Количество серий должно быть больше 0'),
-    reps: z.number().min(1, 'Количество повторений должно быть больше 0'),
-    weight: z.number().min(1, 'Вес должен быть больше 0'),
-  });
+  const [searchValue, setSearchValue] = useState('');
+  const [selectedExercises, setSelectedExercises] = useState<IExercise[]>([]);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: '',
-      sets: 0,
-      reps: 0,
-      weight: 0,
+  const addExercise = (exercise: IExercise) => {
+    if (selectedExercises.some((e) => e.id === exercise.id)) {
+      setSelectedExercises(selectedExercises.filter((e) => e.id !== exercise.id));
+    } else {
+      setSelectedExercises([...selectedExercises, exercise]);
+    }
+  };
+
+  const { data: exercises = [] } = useQuery({
+    queryKey: ['exercises'],
+    queryFn: async () => {
+      const response = await fetchExercises();
+      return response;
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log('!!!', values);
+  const onAddExercises = () => {
+    onSubmit(selectedExercises);
     setOpen(false);
+  };
+
+  const visibleExercises = exercises
+    .filter((exercise) => exercise.name.toLowerCase().includes(searchValue.toLowerCase()))
+    .filter((exercise) => !selectedExercises.some((e) => e.id === exercise.id))
+    .slice(0, 5);
+
+  const renderExercises = (exercises: IExercise[]) => {
+    return exercises.map((exercise) => (
+      <CommandItem
+        key={exercise.id}
+        value={exercise.name}
+        onSelect={() => {
+          addExercise(exercise);
+        }}
+        className={`flex items-center justify-between ${
+          selectedExercises.some((e) => e.id === exercise.id) ? 'text-muted-foreground' : ''
+        }`}
+      >
+        <span>
+          [{exercise.muscleGroup}] : {exercise.name}
+        </span>
+        {selectedExercises.some((e) => e.id === exercise.id) && <CheckboxIcon />}
+      </CommandItem>
+    ));
   };
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
         <div className='fixed bottom-0 left-0 right-0 z-50 px-4 py-4 bg-background'>
-          <Button className='w-full h-12'>Добавить упражнение</Button>
+          <Button className='w-full h-12'>Добавить</Button>
         </div>
       </DrawerTrigger>
-      <DrawerContent>
+      <DrawerContent className='px-4'>
         <DrawerHeader>
-          <DrawerTitle>Добавить упражнение</DrawerTitle>
-          <p className="text-sm text-muted-foreground">Заполните форму</p>
+          <DrawerTitle>Добавить</DrawerTitle>
         </DrawerHeader>
-        <div className="px-4">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
-              <FormField
-                control={form.control}
-                name='name'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Название</FormLabel>
-                    <FormControl>
-                      <Input placeholder='Например, жим лежа' {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+        <div className='space-y-8 pb-4'>
+          <div className='space-y-2'>
+            <Label>Упражнение</Label>
+            <Command className='border'>
+              <CommandInput
+                placeholder='Поиск упражнения...'
+                value={searchValue}
+                onValueChange={setSearchValue}
               />
-              <FormField
-                control={form.control}
-                name='sets'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Кол-во подходов</FormLabel>
-                    <FormControl>
-                      <Input type='number' {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='reps'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Кол-во повторений</FormLabel>
-                    <FormControl>
-                      <Input type='number' {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='weight'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Вес</FormLabel>
-                    <FormControl>
-                      <Input type='number' {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <DrawerFooter>
-                <Button type='submit'>Сохранить</Button>
-              </DrawerFooter>
-            </form>
-          </Form>
+              <div className=''>
+                <CommandEmpty className='h-full flex items-center px-4 py-2'>
+                  Упражнение не найдено
+                </CommandEmpty>
+                <CommandGroup>
+                  {renderExercises(visibleExercises)}
+                  {renderExercises(selectedExercises)}
+                </CommandGroup>
+              </div>
+            </Command>
+          </div>
         </div>
+        <DrawerFooter className='px-0'>
+          <Button onClick={onAddExercises}>Сохранить</Button>
+        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );
-}
+};
