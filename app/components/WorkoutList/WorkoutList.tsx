@@ -13,7 +13,7 @@ export default function WorkoutList() {
   useEffect(() => {
     const loadWorkouts = async () => {
       const data = await fetchWorkouts();
-      setWorkouts(data);
+      setWorkouts(data.slice(0, 3));
     };
     loadWorkouts();
   }, []);
@@ -31,14 +31,16 @@ export default function WorkoutList() {
   };
 
   return (
-    <div className='h-full flex flex-col gap-2 pb-16'>
+    <div className='h-full flex flex-col gap-2'>
       <TrainingCalendar />
-      <div className='flex flex-col gap-2'>
+      <div className='flex flex-col gap-2 pb-24'>
         {workouts.map((workout) => (
           <ExerciseListItem key={workout.id} workout={workout} />
         ))}
       </div>
-      <AddWorkout onSubmit={handleAddExercises} />
+      <div className='fixed bottom-16 left-0 right-0 p-4 bg-background border-t md:bottom-0 md:border-t-0 z-10'>
+        <AddWorkout onSubmit={handleAddExercises} />
+      </div>
     </div>
   );
 }

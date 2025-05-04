@@ -1,19 +1,11 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import { AuthDialog } from './AuthDialog';
+'use client';
 
-export function Header() {
+export default function Header() {
   return (
-    <header className='w-full sticky top-0 z-50 px-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
-      <div className='container flex h-14 items-center mx-auto'>
-        <Link href='/' className='flex items-center space-x-2'>
-          <Image src='/logo.svg' alt='Fitness Tracker Logo' width={32} height={32} priority />
-          <span className='font-semibold'>Fitness Tracker</span>
-        </Link>
-        <nav className='flex flex-1 items-center justify-end space-x-4'>
-          <AuthDialog />
-        </nav>
-      </div>
-    </header>
+    <div className='sticky top-0 flex px-4 pt-4 pb-4 gap-4 items-center justify-between border-b bg-background md:hidden z-50'>
+      <div className=''>Назад</div>
+      <div className='font-bold flex-1 text-center'>Меню</div>
+      <div className=''>х</div>
+    </div>
   );
 }

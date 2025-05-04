@@ -17,7 +17,7 @@ export function TrainingCalendar() {
 
   return (
     <Accordion type='single' collapsible className='w-full'>
-      <AccordionItem value='calendar' className='border-b-0'>
+      <AccordionItem value='calendar'>
         <AccordionTrigger className='text-lg pt-0 pb-2 !no-underline'>
           <div className='flex items-center gap-2'>
             <CalendarIcon className='mb-[2px]' />

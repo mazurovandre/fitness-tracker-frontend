@@ -2,7 +2,8 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import Provider from './components/Provider';
-import { Header } from './components/Header';
+import TabBar from './components/TabBar';
+import Header from './components/Header';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -37,7 +38,10 @@ export default function RootLayout({
       >
         <Provider>
           <Header />
-          <main className='flex-1 container mx-auto px-4 py-6 sm:px-6 lg:px-8'>{children}</main>
+          <TabBar />
+          <main className='flex-1 container mx-auto px-4 py-6 sm:px-6 lg:px-8 md:pt-8 pb-16 md:pb-8'>
+            {children}
+          </main>
         </Provider>
       </body>
     </html>

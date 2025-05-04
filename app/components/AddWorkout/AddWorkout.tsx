@@ -82,7 +82,7 @@ export const AddWorkout: React.FC<AddWorkoutProps> = ({ onSubmit }) => {
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <div className='fixed bottom-0 left-0 right-0 z-50 px-4 py-4 bg-background'>
+        <div className='bg-background'>
           <Button className='w-full h-12'>Добавить</Button>
         </div>
       </DrawerTrigger>
