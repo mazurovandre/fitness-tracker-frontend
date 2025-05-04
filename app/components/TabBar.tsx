@@ -1,32 +1,9 @@
 'use client';
 
-import { cn } from '@/lib/utils';
-import { ChartLine, Dumbbell, NotebookIcon, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-
-const tabs = [
-  {
-    name: 'Журнал',
-    href: '/',
-    icon: NotebookIcon,
-  },
-  {
-    name: 'Тренировки',
-    href: '/workouts',
-    icon: Dumbbell,
-  },
-  {
-    name: 'Статистика',
-    href: '/statistic',
-    icon: ChartLine,
-  },
-  {
-    name: 'Настройки',
-    href: '/settings',
-    icon: Settings,
-  },
-];
+import { cn } from '@/lib/utils';
+import { navigationItems } from '@/app/config/navigation';
 
 export default function TabBar() {
   const pathname = usePathname();
@@ -40,7 +17,7 @@ export default function TabBar() {
             Fitness Tracker
           </Link>
           <nav className='flex items-center gap-6'>
-            {tabs.map((tab) => {
+            {navigationItems.map((tab) => {
               const isActive = pathname === tab.href;
               return (
                 <Link
@@ -63,7 +40,7 @@ export default function TabBar() {
       {/* Mobile TabBar */}
       <div className='fixed bottom-0 left-0 right-0 border-t bg-background md:hidden z-50'>
         <div className='grid h-16 grid-cols-4'>
-          {tabs.map((tab) => {
+          {navigationItems.map((tab) => {
             const isActive = pathname === tab.href;
             return (
               <Link
